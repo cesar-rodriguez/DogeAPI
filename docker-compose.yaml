@@ -15,6 +15,10 @@ services:
             #- DATABASE_URL=sqlite:////var/run/dogeapi/dogeapi.sqlite
             - SECRET_KEY=dev
             - ACCESS_TOKEN_EXPIRE_MINUTES=30
+            - S3_BUCKET_NAME=appcd-demo-dogeapi
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+            - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
         depends_on:
             - db
     db:
