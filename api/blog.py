@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+import uuid
+
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -31,7 +33,11 @@ def create(request: schemas.Blog, db: Session):
     Returns:
         models.Blog: Blog object
     """
-    new_blog = models.Blog(title=request.title, body=request.body, user_id=1)
+    s3_key = str(uuid.uuid4())  # Generating a unique UUID for the S3 key
+
+    new_blog = models.Blog(s3_key=s3_key, user_id=1, title=request.title)
+    new_blog.body = request.body
+
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)
