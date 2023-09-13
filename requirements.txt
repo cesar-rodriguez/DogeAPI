@@ -25,3 +25,4 @@ typing-extensions
 uvicorn
 pre-commit
 psycopg2
+boto3
