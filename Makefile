@@ -48,3 +48,9 @@ get-blogs:
 		'http://0.0.0.0:8000/blog/' \
 		-H 'accept: application/json' \
 		-H 'Authorization: Bearer ${BEARER_TOKEN}'
+
+get-presigned-url:
+	curl -X 'GET' \
+  		'http://localhost:8000/blog/2/download' \
+  		-H 'accept: application/json' \
+  		-H 'Authorization: Bearer ${BEARER_TOKEN}'

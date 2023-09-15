@@ -6,5 +6,5 @@ export AWS_ACCESS_KEY_ID=$(echo $CREDS | jq -r ".Credentials.AccessKeyId")
 export AWS_SECRET_ACCESS_KEY=$(echo $CREDS | jq -r ".Credentials.SecretAccessKey")
 export AWS_SESSION_TOKEN=$(echo $CREDS | jq -r ".Credentials.SessionToken")
 
-docker-compose up -d
+docker-compose up --build -d
 

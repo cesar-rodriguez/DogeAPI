@@ -20,13 +20,13 @@ class Blog(Base):
     __tablename__ = "blogs"
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
-    s3_key = Column(String)
+    _s3_key = Column("s3_key", String)
     user_id = Column(Integer, ForeignKey("users.id"))
     creator = relationship("User", back_populates="blogs")
 
     @property
     def s3_key(self):
-        return getattr(self, "_s3_key", None)
+        return self._s3_key
 
     @s3_key.setter
     def s3_key(self, value):
