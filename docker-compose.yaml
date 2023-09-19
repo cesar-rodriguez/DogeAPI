@@ -32,11 +32,10 @@ services:
         ports:
             - "5432:5432"
     presign:
-        build:
+        #build:
             #context: ../DogeFlaskAPI
             #dockerfile: Dockerfile
-            context: ghcr.io/appcd-dev/dogeapi-presign/presign:latest
-
+        image: ghcr.io/appcd-dev/dogeapi-presign/presign:latest
         ports:
             - 5000:5000
         environment:
