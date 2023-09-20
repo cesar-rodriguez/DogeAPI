@@ -1,8 +1,14 @@
 {
     "metadata": {
-        "repository": "some-repo-url",
-        "commit": "some-commit-hash",
-        "branch": "branch-name"
+        "repository": "https://github.com/appcd-dev/DogeAPI.git",
+        "commit": "8be3cd1a870a43c5171f75ebe1f187a07eace29b",
+        "branch": "s3-dependency"
+    },
+    "graph": {
+        "dogeapi": [
+            "dogeapi-presign"
+        ],
+        "dogeapi-presign": []
     },
     "projects": [
         {
@@ -11,7 +17,8 @@
                     "python"
                 ],
                 "frameworks": [
-                    "fastapi"
+                    "fastapi",
+                    "flask"
                 ]
             },
             "services": [
@@ -23,6 +30,79 @@
                     "ports": [
                         {
                             "listen": 8000
+                        }
+                    ],
+                    "http_egress": [
+                        {
+                            "endpoint": "http://dogeapi-presign/presign",
+                            "operations": ["GET"]
+                        }
+                    ],
+                    "http_ingress": [
+                        {
+                            "endpoint": "http://dogeapi/login",
+                            "operations": ["POST"]
+                        },
+                        {
+                            "endpoint": "http://dogeapi/blog",
+                            "operations": ["GET", "POST"]
+                        },
+                        {
+                            "endpoint": "http://dogeapi/blog/{id}",
+                            "operations": [
+                                "GET",
+                                "PUT",
+                                "DELETE"
+                            ]
+                        },
+                        {
+                            "endpoint": "http://dogeapi/users",
+                            "operations": [
+                                "GET",
+                                "POST"
+                            ]
+                        },
+                        {
+                            "endpoint": "http://dogeapi/users/{id}",
+                            "operations": [
+                                "GET"
+                            ]
+                        },
+                        {
+                            "endpoint": "http://dogeapi/",
+                            "operations": [
+                                "GET"
+                            ]
+                        }
+                    ],
+                    "s3": [
+                        {
+                            "bucket": "${S3_BUCKET_NAME}"
+                        }
+                    ],
+                    "database": {
+                        "dsn": "postgresql+psycopg2://${DB_USERNAME}:${DB_PASSWORD}@db:5432/postgres"
+                    }
+                },
+                {
+                    "name": "dogeapi-presign",
+                    "image_registry": "ghcr.io/appcd-dev/dogeapi-presign/presign",
+                    "image_tag": "latest",
+                    "server_port": 5000,
+                    "ports": [
+                        {
+                            "listen": 5000
+                        }
+                    ],
+                    "http_ingress": [
+                        {
+                            "endpoint": "http://dogeapi-presign/presign/{s3_key}",
+                            "operations": ["GET"]
+                        }
+                    ],
+                    "s3": [
+                        {
+                            "bucket": "${S3_BUCKET}"
                         }
                     ]
                 }
