@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from typing import List
+import os
 
 from fastapi import APIRouter, Depends, Response, status, HTTPException
 from sqlalchemy.orm import Session
@@ -13,7 +14,7 @@ from schema.oa2 import get_current_user
 
 router = APIRouter(tags=["Blogs"], prefix="/blog")
 get_db = configuration.get_db
-
+PRESIGN_SERVICE_URL = os.getenv("PRESIGN_SERVICE_URL", "http://presign:5000")
 
 @router.get("/", response_model=List[schemas.ShowBlog])
 def get_all_blogs(
@@ -119,7 +120,7 @@ def update_blog(
 
 async def get_presigned_url_from_microservice(s3_key: str) -> str:
     # Using Docker Compose service discovery to get presign service by its name.
-    url = f"http://presign:5000/presign/{s3_key}"
+    url = f"{PRESIGN_SERVICE_URL}/presign/{s3_key}"
 
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
