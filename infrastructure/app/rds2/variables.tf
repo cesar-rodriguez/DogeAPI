@@ -67,3 +67,8 @@ variable "rds_seconds_until_auto_pause" {
   default     = 300
   description = "value for seconds until auto pause"
 }
+
+variable "subnets" {
+  type        = list(string)
+  description = "List of subnet IDs"
+}

@@ -59,6 +59,7 @@ resource "aws_rds_cluster" "this" {
   backup_retention_period = var.backup_retention_period
   skip_final_snapshot     = true
   storage_encrypted       = true
+  vpc_security_group_ids  = [aws_security_group.this.id]
 
   scaling_configuration {
     auto_pause               = var.rds_auto_pause
@@ -72,6 +73,20 @@ resource "aws_rds_cluster" "this" {
 
 resource "aws_db_subnet_group" "this" {
   name       = var.db_subnet_group_name
-  subnet_ids = var.private_subnets_cidr_blocks
+  subnet_ids = var.subnets
   tags       = local.tags
+}
+
+resource "aws_security_group" "this" {
+  name        = "${var.database_name}-${var.environment}"
+  description = "Security group for ${var.database_name}-${var.environment}"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    description = "PostgreSQL"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = var.private_subnets_cidr_blocks
+  }
 }
