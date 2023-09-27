@@ -1,8 +1,7 @@
-environment               = "demo"
-aws_region                = "us-east-2"
-database_name             = "dogeapiserverless"
-postgresql_engine_version = "15.2"
-db_subnet_group_name      = "demo-vpc-demo"
+environment          = "demo"
+aws_region           = "us-east-2"
+database_name        = "dogeapiserverless"
+db_subnet_group_name = "demo-vpc-demo"
 private_subnets_cidr_blocks = [
   "10.0.3.0/24",
   "10.0.4.0/24",
