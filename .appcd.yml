@@ -1,5 +1,5 @@
 version: 0.0.1
 name: dogeapi
-image_registry: ghcr.io/appcd-dev/dogeapi/dogeapi
-image_tag: latest
+imageRegistry: ghcr.io/appcd-dev/dogeapi/dogeapi
+imageTag: latest
 dockerFile: Dockerfile
