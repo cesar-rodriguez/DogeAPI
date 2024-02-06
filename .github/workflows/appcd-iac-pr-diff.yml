@@ -69,36 +69,3 @@ jobs:
                 repo: context.repo.repo,
                 body: body
             })
-
-  update-gitops-dir:
-    needs: compare-artifacts # let compare-artifacts job run first, so that the diff comment isn't empty/incorrect
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-
-      - name: Create required directories
-        run: mkdir -p .appcd/charts && chmod 777 .appcd -R
-
-      - name: Login to docker
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-
-      - name: run appCD
-        run: |
-          docker run --rm \
-          --workdir=/code  \
-          -v $PWD:/code ghcr.io/appcd-dev/appcd-dist/appcd@sha256:a38ade31e60f3f7f76b1135a388db158eed3c90816d5b5c09e33dd806efb67d5 \
-          generate --mode ci --output=/code/.appcd/charts
-
-      - name: Inflate helm chart in gitops/dev/
-        run: |
-          helm template demo-chart ./.appcd/charts/dogeapi -f ./.appcd/overrides/dogeapi/values.yaml > ./gitops/dev/dogeapi.yaml
-          
-      - name: Commit changes to gitops/dev
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add ./gitops/dev/dogeapi.yaml
-          git commit -m "Update dogeapi.yaml"
-          git push
