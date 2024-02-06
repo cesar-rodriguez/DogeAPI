@@ -69,3 +69,14 @@ jobs:
                 repo: context.repo.repo,
                 body: body
             })
+      - name: Inflate helm chart in gitops/dev/
+        run: |
+          helm template demo-chart ./.appcd/charts/dogeapi -f .appcd/overrides/dogeapi/values.yaml > gitops/dev/dogeapi.yaml
+        
+      - name: Commit changes to gitops/dev
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add gitops/dev/dogeapi.yaml
+          git commit -m "Update dogeapi.yaml"
+          git push

@@ -42,31 +42,19 @@ jobs:
           aws configure set region us-east-2
           aws eks update-kubeconfig --name demo-demo
       
-      - name: Inflate helm chart in gitops/dev/
+
+      - name: Install Helm Diff
         run: |
-          helm template demo-chart ./.appcd/charts/dogeapi -f .appcd/overrides/dogeapi/values.yaml > gitops/dev/dogeapi.yaml
-      
-      # commit changes to gitops/dev to the repository
-      - name: Commit changes to gitops/dev
+          helm plugin install https://github.com/databus23/helm-diff
+
+      - name: Helm diff
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          git add gitops/dev/dogeapi.yaml
-          git commit -m "Update dogeapi.yaml"
-          git push
+          helm diff upgrade demo-chart ./.appcd/charts/dogeapi -f .appcd/overrides/dogeapi/values.yaml --install
 
-      # - name: Install Helm Diff
-      #   run: |
-      #     helm plugin install https://github.com/databus23/helm-diff
+      - name: Helm Upgrade
+        run: |
+          helm upgrade demo-chart ./.appcd/charts/dogeapi -f .appcd/overrides/dogeapi/values.yaml --install --wait
 
-      # - name: Helm diff
-      #   run: |
-      #     helm diff upgrade demo-chart ./.appcd/charts/dogeapi -f .appcd/overrides/dogeapi/values.yaml --install
-
-      # - name: Helm Upgrade
-      #   run: |
-      #     helm upgrade demo-chart ./.appcd/charts/dogeapi -f .appcd/overrides/dogeapi/values.yaml --install --wait
-
-      # - name: Get Ingress
-      #   run: |
-      #     kubectl get ingress
+      - name: Get Ingress
+        run: |
+          kubectl get ingress
