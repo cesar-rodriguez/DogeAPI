@@ -71,12 +71,12 @@ jobs:
             })
       - name: Inflate helm chart in gitops/dev/
         run: |
-          helm template demo-chart ./artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts/dogeapi -f ./artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/overrides/dogeapi/values.yaml > ./artifact/${{ steps.extract_branch.outputs.branch }}/gitops/dev/dogeapi.yaml
+          helm template demo-chart ./artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts/dogeapi -f ./artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/overrides/dogeapi/values.yaml > ./pr_branch/gitops/dev/dogeapi.yaml
         
       - name: Commit changes to gitops/dev
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git add gitops/dev/dogeapi.yaml
+          git add ./pr_branch/gitops/dev/dogeapi.yaml
           git commit -m "Update dogeapi.yaml"
           git push
