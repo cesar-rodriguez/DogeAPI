@@ -71,7 +71,7 @@ jobs:
             })
       - name: Inflate helm chart in gitops/dev/
         run: |
-          helm template demo-chart ./.appcd/charts/dogeapi -f .appcd/overrides/dogeapi/values.yaml > gitops/dev/dogeapi.yaml
+          helm template demo-chart ./artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts/dogeapi -f ./artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/overrides/dogeapi/values.yaml > ./artifact/${{ steps.extract_branch.outputs.branch }}/gitops/dev/dogeapi.yaml
         
       - name: Commit changes to gitops/dev
         run: |
