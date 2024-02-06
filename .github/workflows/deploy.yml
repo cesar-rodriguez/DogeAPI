@@ -41,19 +41,23 @@ jobs:
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set region us-east-2
           aws eks update-kubeconfig --name demo-demo
-
-      - name: Install Helm Diff
+      
+      - name: Update gitops/dev
         run: |
-          helm plugin install https://github.com/databus23/helm-diff
+          helm template demo-chart ./.appcd/charts/dogeapi -f .appcd/overrides/dogeapi/values.yaml > gitops/dev/dogeapi.yaml
 
-      - name: Helm diff
-        run: |
-          helm diff upgrade demo-chart ./.appcd/charts/dogeapi -f .appcd/overrides/dogeapi/values.yaml --install
+      # - name: Install Helm Diff
+      #   run: |
+      #     helm plugin install https://github.com/databus23/helm-diff
 
-      - name: Helm Upgrade
-        run: |
-          helm upgrade demo-chart ./.appcd/charts/dogeapi -f .appcd/overrides/dogeapi/values.yaml --install --wait
+      # - name: Helm diff
+      #   run: |
+      #     helm diff upgrade demo-chart ./.appcd/charts/dogeapi -f .appcd/overrides/dogeapi/values.yaml --install
 
-      - name: Get Ingress
-        run: |
-          kubectl get ingress
+      # - name: Helm Upgrade
+      #   run: |
+      #     helm upgrade demo-chart ./.appcd/charts/dogeapi -f .appcd/overrides/dogeapi/values.yaml --install --wait
+
+      # - name: Get Ingress
+      #   run: |
+      #     kubectl get ingress
