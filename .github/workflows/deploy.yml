@@ -42,7 +42,7 @@ jobs:
           aws configure set region us-east-2
           aws eks update-kubeconfig --name demo-demo
       
-      - name: Update gitops/dev
+      - name: Inflate helm chart in gitops/dev
         run: |
           helm template demo-chart ./.appcd/charts/dogeapi -f .appcd/overrides/dogeapi/values.yaml > gitops/dev/dogeapi.yaml
 
