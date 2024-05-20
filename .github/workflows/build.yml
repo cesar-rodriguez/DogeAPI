@@ -11,9 +11,18 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
       - name: pull latest
         run: make pull
       - name: Build image
         run: make build
-      #- name: Test code format -- pre-commit
-      #  run: make lint
+      - name: run appCD
+        run: |
+          docker pull ghcr.io/appcd-dev/appcd-dist/appcd-cli:cli
+          docker run --rm \
+            --workdir=/app/scan  \
+            -v $PWD:/app/scan ghcr.io/appcd-dev/appcd-dist/appcd-cli:cli \
+            generate --lang Python --output=/code/.appcd/charts
+          cd .appcd/charts && ls
+          unzip code.zip && rm code.zip
