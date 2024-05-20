@@ -1,6 +1,9 @@
 version: 0.0.1
+name: DogeApi
 services:
   dogeapi:
     dtr: ghcr.io/appcd-dev/dogeapi/dogeapi
+    path: /
     tag: latest
-    dockerFile: Dockerfile
+    language: Python
+    dockerFile: ./Dockerfile
