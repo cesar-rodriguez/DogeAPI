@@ -16,29 +16,22 @@ jobs:
           ref: main
           path: main_branch
           fetch-depth: 1
-      - name: Generate IaC from Main Branch
+      - name: Generate IAC for main branch
         env:
           APPCD_TOKEN: ${{ secrets.APPCD_TOKEN }}
           APPCD_URL: ${{ secrets.APPCD_URL }}
-        run: |
-          mkdir -p artifact/main/ ./artifact/tmp
-          docker run --rm \
-            --workdir=/app/scan  \
-            -e APPCD_TOKEN=$APPCD_TOKEN \
-            -e APPCD_URL=$APPCD_URL \
-            -v ./main_branch:/app/scan \
-            -v ./artifact/tmp:/tmp \
-            -v ./artifact/main:/artifact/main \
-            --entrypoint=appcd \
-          ghcr.io/appcd-dev/appcd-dist/appcd-cli:v0.9.1 \
-          generate --mode ci --lang Python --log 2 --output=/artifact/main/.appcd/charts --iac-type Helm
-          cd artifact/main/.appcd/charts
-          unzip scan.zip && rm scan.zip && ls -latr && pwd
-      - name: Upload logs
-        uses: actions/upload-artifact@v2
+        uses: appcd-dev/action@v0.0.1
         with:
-          name: analyzer_logs_1
-          path: artifact
+            cloud: 'aws'
+            language: 'Python'
+            outputDir: './artifact/main'
+            scanPath: './main_branch'
+            targetCompute: 'k8s'
+      - name: Upload main artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: main_branch_artifacts
+          path: artifact/main
       - name: Checkout PR Branch
         uses: actions/checkout@v4
         with:
@@ -50,58 +43,36 @@ jobs:
         run: echo "branch=$(basename ${{ github.head_ref}})" >> $GITHUB_OUTPUT
       - name: echo branch name
         run: echo ${{ steps.extract_branch.outputs.branch }}
-      - name: Generate IaC from PR branch
+      - name: Generate IAC for PR branch
         env:
           APPCD_TOKEN: ${{ secrets.APPCD_TOKEN }}
           APPCD_URL: ${{ secrets.APPCD_URL }}
-        run: |
-          mkdir -p artifact/${{ steps.extract_branch.outputs.branch }}/ ./artifact/tmp
-          docker run --rm \
-            --workdir=/app/scan  \
-            -v ./pr_branch/:/app/scan \
-            -v ./artifact/${{ steps.extract_branch.outputs.branch }}:/artifact/${{ steps.extract_branch.outputs.branch }} \
-            -v ./artifact/tmp:/tmp \
-            -e APPCD_TOKEN=$APPCD_TOKEN \
-            -e APPCD_URL=$APPCD_URL \
-            --entrypoint=appcd \
-            ghcr.io/appcd-dev/appcd-dist/appcd-cli:v0.9.1 \
-            generate --mode ci --lang Python --log 2 --iac-type Helm --output=/artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts
-          cd artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts
-          unzip scan.zip && rm scan.zip && ls -latr
-      - name: Upload logs
-        uses: actions/upload-artifact@v2
+        uses: appcd-dev/action@v0.0.1
         with:
-          name: analyzer_logs_2
-          path: artifact
-      - name: Copy infrastructure files if empty
-        run: |
-          cd pr_branch
-          mkdir -p infrastructure
-          if [ -z "$(ls -A infrastructure/)" ]; then
-            cp -r .appcd/infrastructure/app/rds/ infrastructure/
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action"
-            git add infrastructure/
-            git commit -m "Adds IaC dependency files"
-            git push
-          fi
+            cloud: 'aws'
+            language: 'Python'
+            outputDir: './artifact/pr_artifacts'
+            scanPath: './pr_branch'
+            targetCompute: 'k8s'
+      - name: Upload PR artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr_branch_artifacts
+          path: ./artifact/pr_artifacts
       - name: Generate diff between Main and PR branch
         run: |
           mkdir -p pr_branch/deployment_files
-          mv ./artifact/main/.appcd/charts/helm/scan_*/* pr_branch/deployment_files/
-          cd pr_branch
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add deployment_files
-          git commit -m "staging deployment files from main to compare them"
-          rm -rf deploment_files
-          cd ..
-          mkdir -p pr_branch/deployment_files/
-          cp -R artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts/helm/scan_*/* pr_branch/deployment_files/
-          cd pr_branch
+          cd ./artifact/main/
+          git init
+          git config --local user.email "bot@appcd.com"
+          git config --local user.name "AppCD Bot"
           git add .
-          git diff --staged --output=../diff.txt deployment_files/ | cat
-          cat ../diff.txt
+          git commit -m "staging deployment files from main to compare them"
+          rm -rf *
+          cp -R ../pr_artifacts/* .
+          git add .
+          git diff --staged --output=../../diff.txt . | cat
+          cat ../../diff.txt
       - name: Comment PR with IaC Changes
         uses: actions/github-script@v6
         with:
