@@ -101,15 +101,20 @@ jobs:
             cloud: 'aws'
             language: 'Python'
             outputDir: './.appcd/charts'
-            scanPath: './main_branch'
+            scanPath: './'
             targetCompute: 'k8s'
+      - name: Upload IAC artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: iac_artifact
+          path: ./.appcd/charts
       - name: Inflate helm chart in gitops/
         run: |
-          tree
+          tree ./.appcd
           if [[ "${{ github.ref }}" == "refs/tags/"* ]]; then
-            helm template demo-chart ./.appcd/charts/dogeapi -f ./.appcd/overrides/dogeapi/values.yaml --set image.tag=${{ steps.version.outputs.image_tag }} > ./gitops/prod/dogeapi.yaml
+            helm template demo-chart ./.appcd/charts/helm/dogeapi -f ./.appcd/overrides/dogeapi/values.yaml --set image.tag=${{ steps.version.outputs.image_tag }} > ./gitops/prod/dogeapi.yaml
           else
-            helm template demo-chart ./.appcd/charts/dogeapi -f ./.appcd/overrides/dogeapi/values.yaml > ./gitops/dev/dogeapi.yaml
+            helm template demo-chart ./.appcd/charts/helm/dogeapi -f ./.appcd/overrides/dogeapi/values.yaml > ./gitops/dev/dogeapi.yaml
           fi
               
       # in real apps the gitops config and spec would in be a separate repo
