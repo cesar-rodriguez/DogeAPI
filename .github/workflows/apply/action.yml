@@ -46,9 +46,3 @@ runs:
       run: terraform apply -no-color --auto-approve --var region=${{ inputs.aws_region }}
       working-directory: ./gitops/terraform
       continue-on-error: true
-
-    - name: APP URL
-      shell: bash
-      run: |
-        terraform output | grep function_url | cut -d " " -f 3
-      working-directory: ./gitops/terraform
