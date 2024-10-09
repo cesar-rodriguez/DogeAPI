@@ -3,7 +3,7 @@ name: infra-apply
 on:
   push:
     branches:
-      - demo-dogeapi
+      - demo-argocd
     paths:
       - 'gitops/terraform/**'
       - '.github/workflows/**'
