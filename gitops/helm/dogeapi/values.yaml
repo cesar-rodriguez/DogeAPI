@@ -33,14 +33,14 @@ helm_service_account_456aef28bff05588af6eb10a545b8d18:
     name: dogeapi
 helm_workload_07c37ab930a2572c9a6912fb5592e0e8:
     env:
-        ACCESS_LOG: access.log
-        ERROR_LOG: error.log
+        ACCESS_LOG: ""
+        ERROR_LOG: ""
     env_from_config: []
     env_from_secret: []
-    image: ghcr.io/appcd-dev/dogeapi/dogeapi
+    image: ""
     image_pull_policy: Always
     image_pull_secret: null
-    image_tag: latest
+    image_tag: ""
     kind: Deployment
     labels:
         service: myapp
