@@ -12,6 +12,6 @@ output "aws_iam_role_dogeapi_role_name" {
 
 
 output "aws_dynamodb_my_table_arn" {
-  value = module.appcd_028f19da-2dbf-47a4-8b48-c2a26b3b5914.arn
+  value = module.appcd_f5ed963a-d560-43df-a468-7272bf623b87.arn
   sensitive = false
 }
