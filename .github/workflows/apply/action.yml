@@ -25,7 +25,7 @@ runs:
     - name: Create backend.tf
       shell: bash
       run: |
-        cat <<EOF > ./infra/terraform/backend.tf
+        cat <<EOF > ./gitops/terraform/backend.tf
         terraform {
           backend "s3" {}
         }
@@ -38,17 +38,17 @@ runs:
           -backend-config="bucket=${{ inputs.tf_state_bucket }}" \
           -backend-config="key=${{ inputs.tf_state_key }}" \
           -backend-config="region=${{ inputs.aws_region }}"
-      working-directory: ./infra/terraform
+      working-directory: ./gitops/terraform
 
     - name: TF Apply
       shell: bash
       id: apply
       run: terraform apply -no-color --auto-approve --var region=${{ inputs.aws_region }}
-      working-directory: ./infra/terraform
+      working-directory: ./gitops/terraform
       continue-on-error: true
 
     - name: APP URL
       shell: bash
       run: |
         terraform output | grep function_url | cut -d " " -f 3
-      working-directory: ./infra/terraform
+      working-directory: ./gitops/terraform
