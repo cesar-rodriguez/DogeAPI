@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - main
-      - demo-dogeapi
+      - demo-argocd
     paths:
       - 'gitops/terraform/**'
       - '.github/workflows/infra-*.yml'
