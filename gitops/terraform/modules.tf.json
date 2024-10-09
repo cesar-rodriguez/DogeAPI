@@ -1,0 +1,34 @@
+{
+  "module": {
+    "appcd_5946a085-5560-51f9-8683-3b21d7bd5f37": {
+      "assume_role_policy": "{\n\t\t\"Version\": \"2012-10-17\",\n\t\t\"Statement\":{\n\t\t\t\t\"Action\": \"sts:AssumeRole\",\n\t\t\t\t\"Effect\": \"Allow\",\n\t\t\t\t\"Principal\": {\n\t\t\t\t\t\"Service\": \"eks.amazonaws.com\"\n\t\t\t\t}\n\t\t\t}\n\t}",
+      "description": null,
+      "force_detach_policies": true,
+      "inline_policy": [],
+      "name": "DogeAPI-role",
+      "source": "./modules/aws_iam_role",
+      "tags": null
+    },
+    "appcd_5d0f885c-0c24-4ffa-a8ea-8a820055aaee": {
+      "name": "Reader",
+      "policy": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"74482f489cfc488d94180e621a6fe6660\",\n      \"Action\": [\n        \"s3:Get*\",\n        \"s3:List*\"\n      ],\n      \"Effect\": \"Allow\",\n      \"Resource\": [\n        \"${module.appcd_74482f48-9cfc-488d-9418-0e621a6fe666.arn}\",\n        \"${module.appcd_74482f48-9cfc-488d-9418-0e621a6fe666.arn}/*\"\n      ]\n    }\n  ]\n}",
+      "role": "${module.appcd_5946a085-5560-51f9-8683-3b21d7bd5f37.name}",
+      "role_type": "Reader",
+      "source": "./modules/aws_iam_role_policy"
+    },
+    "appcd_74482f48-9cfc-488d-9418-0e621a6fe666": {
+      "block_public_access": true,
+      "bucket_name": "stackgen-test-cesar",
+      "bucket_policy": "",
+      "enable_versioning": true,
+      "enable_website_configuration": false,
+      "source": "./modules/aws_s3",
+      "sse_algorithm": "aws:kms",
+      "tags": {
+        "appstack": "dogeapi"
+      },
+      "website_error_document": "404.html",
+      "website_index_document": "index.html"
+    }
+  }
+}
