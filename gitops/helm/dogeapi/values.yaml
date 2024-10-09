@@ -32,7 +32,9 @@ helm_service_account_456aef28bff05588af6eb10a545b8d18:
     labels: {}
     name: dogeapi
 helm_workload_07c37ab930a2572c9a6912fb5592e0e8:
-    env: {}
+    env:
+        ACCESS_LOG: log.json
+        ERROR_LOG: error.json
     env_from_config: []
     env_from_secret: []
     image: ghcr.io/appcd-dev/dogeapi/dogeapi
